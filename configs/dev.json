@@ -1,0 +1,48 @@
+{
+  "defaults": {
+    "llm": "gpt-4o-mini",
+    "embedding": "text-embedding-3-small"
+  },
+
+  "llms": {
+    "gpt-4o-mini": {
+      "provider": "openai",
+      "type": "remote",
+      "api_key_env": "OPENAI_API_KEY",
+      "base_url": "https://api.openai.com/v1"
+    },
+    "mistral-7b-instruct-v0.2": {
+      "provider": "local",
+      "type": "local",
+      "url": "http://localhost:11434/v1"
+    }
+  },
+
+  "embeddings": {
+    "text-embedding-3-small": {
+      "provider": "openai",
+      "type": "remote",
+      "api_key_env": "OPENAI_API_KEY",
+      "base_url": "https://api.openai.com/v1"
+    },
+    "nomic-embed-text-v1.5": {
+      "provider": "local",
+      "type": "local",
+      "url": "http://localhost:8000/embed"
+    }
+  },
+
+  "databases": {
+    "qdrant": {
+      "url": "http://localhost:6333"
+    },
+    "mongo": {
+      "url": "mongodb://localhost:27017"
+    },
+    "neo4j": {
+      "url": "bolt://localhost:7687",
+      "user": "neo4j",
+      "password_env": "NEO4J_PASSWORD"
+    }
+  }
+}
