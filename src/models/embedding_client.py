@@ -1,4 +1,5 @@
 import requests
+# from langchain_community.embeddings import OllamaEmbeddings
 
 class RemoteEmbedding:
     def __init__(self, api_key: str, base_url: str, model: str):
@@ -12,12 +13,12 @@ class RemoteEmbedding:
         response = requests.post(f"{self.base_url}/embeddings", headers=headers, json=data)
         return response.json()["data"][0]["embedding"]
 
-class LocalEmbedding:
-    def __init__(self, url: str, model: str):
-        self.url = url
-        self.model = model
+# class LocalEmbedding:
+#     def __init__(self, url: str, model: str):
+#         self.model = model
+#         self.client = OllamaEmbeddings(
+#             model=model,
+#         )
 
-    def embed(self, text: str) -> list[float]:
-        data = {"model": self.model, "input": text}
-        response = requests.post(f"{self.url}/embed", json=data)
-        return response.json()["embedding"]
+#     def embed(self, text: str) -> list[float]:
+#         return self.client.embed_query(text)

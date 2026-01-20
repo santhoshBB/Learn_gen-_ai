@@ -1,7 +1,7 @@
 {
   "defaults": {
-    "llm": "gpt-4o-mini",
-    "embedding": "text-embedding-3-small"
+    "llm": "gemma2:2b",
+    "embedding": "nomic-embed-text"
   },
 
   "llms": {
@@ -15,6 +15,11 @@
       "provider": "local",
       "type": "local",
       "url": "http://localhost:11434/v1"
+    },
+    "gemma2:2b": {
+      "provider": "local",
+      "type": "local",
+      "url": "http://localhost:11434/v1"
     }
   },
 
@@ -25,7 +30,7 @@
       "api_key_env": "OPENAI_API_KEY",
       "base_url": "https://api.openai.com/v1"
     },
-    "nomic-embed-text-v1.5": {
+    "nomic-embed-text": {
       "provider": "local",
       "type": "local",
       "url": "http://localhost:8000/embed"
@@ -34,7 +39,8 @@
 
   "databases": {
     "qdrant": {
-      "url": "http://localhost:6333"
+      "url": "http://localhost:6333",
+      "collection": "ingested_files"
     },
     "mongo": {
       "url": "mongodb://localhost:27017"

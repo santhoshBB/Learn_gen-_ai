@@ -12,12 +12,12 @@ class RemoteLLM:
         response = requests.post(f"{self.base_url}/chat/completions", headers=headers, json=data)
         return response.json()["choices"][0]["message"]["content"]
 
-class LocalLLM:
-    def __init__(self, url: str, model: str):
-        self.url = url
-        self.model = model
+# class LocalLLM:
+#     def __init__(self, url: str, model: str):
+#         self.url = url
+#         self.model = model
 
-    def generate(self, prompt: str) -> str:
-        data = {"model": self.model, "prompt": prompt}
-        response = requests.post(f"{self.url}/generate", json=data)
-        return response.json()["response"]
+#     def generate(self, prompt: str) -> str:
+#         data = {"model": self.model, "prompt": prompt}
+#         response = requests.post(f"{self.url}/generate", json=data)
+#         return response.json()["response"]

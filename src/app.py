@@ -2,10 +2,14 @@ import json
 import logging
 import os
 from dotenv import load_dotenv
+from langchain_community.embeddings import OllamaEmbeddings
+from openai import OpenAI
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+client = OpenAI(base_url="http://localhost:11434/v1", api_key="none")
 
 def load_config(config_path: str) -> dict:
     """Load JSON configuration file."""
@@ -15,7 +19,7 @@ def load_config(config_path: str) -> dict:
 def get_llm(config: dict, model_name: str):
     """Initialize and return the LLM client."""
     # Placeholder: Implement your LLM logic here
-    from src.models.llm_client import RemoteLLM, LocalLLM
+    from src.models.llm_client import RemoteLLM
     model_config = config["llms"][model_name]
     if model_config["type"] == "remote":
         return RemoteLLM(
@@ -24,15 +28,12 @@ def get_llm(config: dict, model_name: str):
             model=model_name
         )
     else:
-        return LocalLLM(
-            url=model_config["url"],
-            model=model_name
-        )
+        return client
 
 def get_embedding(config: dict, model_name: str):
     """Initialize and return the embedding client."""
     # Placeholder: Implement your embedding logic here
-    from src.models.embedding_client import RemoteEmbedding, LocalEmbedding
+    from src.models.embedding_client import RemoteEmbedding
     model_config = config["embeddings"][model_name]
     if model_config["type"] == "remote":
         return RemoteEmbedding(
@@ -41,10 +42,7 @@ def get_embedding(config: dict, model_name: str):
             model=model_name
         )
     else:
-        return LocalEmbedding(
-            url=model_config["url"],
-            model=model_name
-        )
+        return OllamaEmbeddings(model=model_name)
 
 def main():
     load_dotenv()
