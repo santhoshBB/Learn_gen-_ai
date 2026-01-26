@@ -1,0 +1,16 @@
+python rq setup to add
+multiple files rag
+agents using langgraph
+
+plan create a system by which the sys can ans web data, pdfs general topics 
+add agents and create flows
+explore mem0 before everything using qdrant
+create neo4j space to track user likes when he is logged in 
+create a LTM and add mongoDB for stm 
+sockets
+
+multi modal ai- which supports texts, images, file etc
+
+
+exploration using two different models
+
