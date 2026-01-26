@@ -16,3 +16,8 @@ exploration using two different models
 
 
 at the time of upload/injestion the flow to get ready
+
+
+in future add another llm model to classify it 
+
+current setup is stateless

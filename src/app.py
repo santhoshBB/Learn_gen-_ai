@@ -3,13 +3,13 @@ import logging
 import os
 from dotenv import load_dotenv
 from langchain_community.embeddings import OllamaEmbeddings
-from openai import OpenAI
+from src.models.llm_client import RemoteLLM, LocalLLM
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-client = OpenAI(base_url="http://localhost:11434/v1", api_key="none")
+# client = OpenAI(base_url="http://localhost:11434/v1", api_key="none")
 
 def load_config(config_path: str) -> dict:
     """Load JSON configuration file."""
@@ -17,18 +17,24 @@ def load_config(config_path: str) -> dict:
         return json.load(f)
 
 def get_llm(config: dict, model_name: str):
-    """Initialize and return the LLM client."""
-    # Placeholder: Implement your LLM logic here
-    from src.models.llm_client import RemoteLLM
     model_config = config["llms"][model_name]
-    if model_config["type"] == "remote":
-        return RemoteLLM(
-            api_key=os.getenv(model_config["api_key_env"]),
-            base_url=model_config["base_url"],
-            model=model_name
-        )
-    else:
-        return client
+
+    match model_config["type"]:
+        case "remote":
+            return RemoteLLM(
+                api_key=os.getenv(model_config["api_key_env"]),
+                base_url=model_config["base_url"],
+                model=model_name
+            )
+
+        case "local":
+            return LocalLLM(
+                base_url=model_config["url"],
+                model=model_name
+            )
+
+        case _:
+            raise ValueError(f"Unsupported LLM type: {model_config['type']}")
 
 def get_embedding(config: dict, model_name: str):
     """Initialize and return the embedding client."""
