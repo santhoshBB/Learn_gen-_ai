@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dev Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .chat-container {
+      width: 75vw;              /* 🔥 75% width */
+      max-width: 1200px;
+      height: 85vh;
+      background: #020617;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      border: 1px solid #1e293b;
+    }
+
+    .chat-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-title {
+      font-weight: bold;
+    }
+
+    .dev-info {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      background: #020617;
+    }
+
+    .message {
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      max-width: 70%;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      background: #2563eb;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: #1e293b;
+      margin-right: auto;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #1e293b;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      outline: none;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 14px;
+    }
+
+    .chat-input button {
+      padding: 12px 18px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .chat-input button:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <div class="chat-header">
+    <div class="chat-title">Dev Chat</div>
+    <div class="dev-info">
+      session: <span id="sessionId"></span> |
+      type: <span id="chatType">unknown</span>
+    </div>
+  </div>
+
+  <div id="messages" class="chat-messages"></div>
+
+  <div class="chat-input">
+    <input id="prompt" type="text" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  // Session (refresh = new session)
+  const sessionKey = "chat_session_id";
+  let sessionId = sessionStorage.getItem(sessionKey);
+
+  if (!sessionId) {
+    sessionId = Date.now().toString();
+    sessionStorage.setItem(sessionKey, sessionId);
+  }
+
+  document.getElementById("sessionId").innerText = sessionId;
+
+  const messagesDiv = document.getElementById("messages");
+  const chatTypeSpan = document.getElementById("chatType");
+
+  function addMessage(text, type) {
+    const div = document.createElement("div");
+    div.className = `message ${type}`;
+    div.innerText = text;
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById("prompt");
+    const prompt = input.value.trim();
+    if (!prompt) return;
+
+    addMessage(prompt, "user");
+    input.value = "";
+
+    try {
+      const res = await fetch(
+        `http://0.0.0.0:8000/chat?prompt=${encodeURIComponent(prompt)}`,
+        {
+          method: "POST",
+          headers: {
+            "accept": "application/json",
+            "X-Session-Id": sessionId
+          }
+        }
+      );
+
+      const data = await res.json();
+
+      /**
+       * Expect backend to eventually return:
+       * {
+       *   response: "...",
+       *   type: "rag" | "normal" | "nodejs" | "pmjjby"
+       * }
+       */
+      if (data.type) {
+        chatTypeSpan.innerText = data.type;
+      }
+
+      addMessage(data.response ?? JSON.stringify(data), "bot");
+
+    } catch (err) {
+      addMessage("Error connecting to server", "bot");
+    }
+  }
+
+  document.getElementById("prompt").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>
+
+</body>
+</html>
