@@ -1,5 +1,4 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse
 from typing import List
 from uuid import uuid4
 from pathlib import Path
@@ -10,6 +9,8 @@ from datetime import datetime
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_qdrant import QdrantVectorStore
+from qdrant_client import QdrantClient
+from fastapi import Form
 
 from src.app import load_config, get_embedding
 
@@ -20,16 +21,20 @@ CHUNK_OVERLAP = 300
 ALLOWED_EXTENSIONS = {".pdf"}
 
 
-@router.post("/and-ingest")
+@router.post("/ingest")
 async def upload_and_ingest(
-    files: List[UploadFile] = File(..., description="Upload one or more PDF files")
+    files: List[UploadFile] = File(..., description="Upload one or more PDF files"),
+    collection_name: str = Form(..., description="Name for the Qdrant collection")
 ):
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
 
+    # Load your config and embedder here (assuming these are defined elsewhere)
     config = load_config("configs/dev.json")
     embedder = get_embedding(config, config["defaults"]["embedding"])
+    qdrant_url = config["databases"]["qdrant"]["url"]
 
+    qdrant_client = QdrantClient(url=qdrant_url)
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
         chunk_overlap=CHUNK_OVERLAP,
@@ -47,6 +52,13 @@ async def upload_and_ingest(
         if ext not in ALLOWED_EXTENSIONS:
             errors.append(f"Unsupported file type: {filename}")
             continue
+
+        try:
+            qdrant_client.get_collection(collection_name=collection_name)
+            errors.append(f"Collection '{collection_name}' already exists. Skipping ingestion.")
+            continue
+        except Exception:
+            pass
 
         temp_path = None
         try:
@@ -73,8 +85,8 @@ async def upload_and_ingest(
             QdrantVectorStore.from_documents(
                 documents=chunks,
                 embedding=embedder,
-                url=config["databases"]["qdrant"]["url"],
-                collection_name=config["databases"]["qdrant"]["collection"],
+                url=qdrant_url,
+                collection_name=collection_name.lower().strip(),
             )
 
             total_ingested_chunks += len(chunks)
@@ -89,17 +101,13 @@ async def upload_and_ingest(
                 temp_path.unlink(missing_ok=True)
 
     if errors:
-        return JSONResponse(
-            status_code=207,
-            content={
-                "message": f"Ingested {total_ingested_chunks} chunks with some errors",
-                "ingested_chunks": total_ingested_chunks,
-                "errors": errors
-            }
-        )
+        return {
+            "message": f"Ingested {total_ingested_chunks} chunks with some errors",
+            "ingested_chunks": total_ingested_chunks,
+            "errors": errors
+        }
 
     return {
         "message": "All files successfully ingested",
         "ingested_chunks": total_ingested_chunks,
-        "collection": config["databases"]["qdrant"]["collection"]
     }

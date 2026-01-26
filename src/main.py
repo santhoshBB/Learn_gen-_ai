@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import routers
-from src.api.routers import root, chat, upload
+from src.api.routers import root, chat, upload, user
 
 app = FastAPI(title="RAG + Agentic AI System")
 
@@ -20,6 +20,7 @@ app.add_middleware(
 app.include_router(root.router)
 app.include_router(chat.router)
 app.include_router(upload.router)
+app.include_router(user.router)
 
 
 if __name__ == "__main__":

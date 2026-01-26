@@ -1,0 +1,19 @@
+user_query + session_id
+  ↓
+Classifier
+  ├── Normal
+  │     └── Session memory (TTL) → LLM
+  │
+  ├── RAG
+  │     └── Login
+  │     └── Vector search (Qdrant)
+  │     └── LLM (doc-grounded)
+  │
+  └── Workflow
+        └── Login
+        └── Mem0 (user_id)
+        └── LangGraph
+              ├── Plan        🔹 checkpoint
+              ├── Tool call   🔹 checkpoint
+              ├── Validate    🔹 checkpoint
+              └── Respond
