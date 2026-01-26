@@ -151,26 +151,21 @@
     input.value = "";
 
     try {
-      const res = await fetch(
-        `http://0.0.0.0:8000/chat?prompt=${encodeURIComponent(prompt)}`,
-        {
-          method: "POST",
-          headers: {
-            "accept": "application/json",
-            "X-Session-Id": sessionId
-          }
-        }
-      );
+      const res = await fetch("http://0.0.0.0:8000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "X-Session-Id": sessionId   // optional but fine
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+          sessionId: sessionId
+        })
+      });
 
       const data = await res.json();
 
-      /**
-       * Expect backend to eventually return:
-       * {
-       *   response: "...",
-       *   type: "rag" | "normal" | "nodejs" | "pmjjby"
-       * }
-       */
       if (data.type) {
         chatTypeSpan.innerText = data.type;
       }
@@ -181,7 +176,6 @@
       addMessage("Error connecting to server", "bot");
     }
   }
-
   document.getElementById("prompt").addEventListener("keydown", (e) => {
     if (e.key === "Enter") sendMessage();
   });

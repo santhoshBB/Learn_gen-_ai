@@ -2,10 +2,10 @@ user_query + session_id
   ↓
 Classifier
   ├── Normal
-  │     └── Session memory (TTL) → LLM
+  │     └── simple dict
   │
   ├── RAG
-  │     └── Login
+  │     └── Login -> simple dict->if login move it to Mem0 qdrant and clear the dict 
   │     └── Vector search (Qdrant)
   │     └── LLM (doc-grounded)
   │
