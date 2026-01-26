@@ -18,7 +18,7 @@ async def generate_text(req: ChatRequest):
         config = load_config("configs/dev.json")
 
         query_type = classify_query(req.prompt, config)
-        response = route_query(req.prompt, query_type, config)
+        response = route_query(req.prompt, query_type, req.sessionId, config)
 
         return {
             "type": query_type,

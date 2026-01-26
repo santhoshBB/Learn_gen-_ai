@@ -1,21 +1,16 @@
 from src.app import get_llm
+from src.core.chat_memory import add_message, get_session_history
 
 
-# def normal_chat(prompt: str, config: dict):
-#     llm = get_llm(config, config["defaults"]["llm"])
+def normal_chat(prompt: str, session_id: str, config: dict):
+    add_message(session_id, "user", prompt)
 
-#     response = llm.create(
-#         messages=[
-#             {"role": "user", "content": prompt}
-#         ]
-#     )
-
-#     return response.choices[0].message.content
-
-def normal_chat(prompt: str, config: dict):
-    return (
-        "I can assist only with queries related to Node.js, "
-        "Banking Correspondent (BC/CSP), and PMJJBY. "
-        "Please ask a question related to these topics."
+    llm = get_llm(config, config["defaults"]["llm"])
+    response = llm.create(
+        messages=get_session_history(session_id)
     )
 
+    answer = response.choices[0].message.content
+    add_message(session_id, "assistant", answer)
+
+    return answer

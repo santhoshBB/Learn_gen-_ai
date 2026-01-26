@@ -55,17 +55,7 @@
     "collections":{
       "combined-ingest":{
         "files":["nodejs.pdf", "FAQ_on_BC.pdf", "PMJJBY.pdf"]
-      },
-      "nodejs":{
-        "files":["nodejs.pdf"]
-      },
-      "bc":{
-        "files":["FAQ_on_BC.pdf"]
-      },
-      "pmjjby":{
-        "files":["PMJJBY.pdf"]
       }
-      
     }
   }
 }
