@@ -14,3 +14,6 @@ logs/
 data/
 *.log
 *.pdf
+
+node_modules/
+package-lock.json
