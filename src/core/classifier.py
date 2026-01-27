@@ -22,16 +22,16 @@ class DomainClassifier:
     RAG_SCORE_THRESHOLD = 0.77
     DOMAIN_KEYWORDS = {
         QueryType.RAG_NODEJS: [
-            "node", "nodejs", "javascript", "npm", "express", "async",
+            "node", "nodejs", "javascript", "npm", "express", "async", "js",
             "callback", "promise", "module", "package", "runtime", "v8"
         ],
         QueryType.RAG_BC: [
-            "banking correspondent", "bc", "business correspondent",
-            "agent", "banking agent", "financial inclusion", "correspondent"
+            "business correspondent", "bc", "business correspondent",
+            "agent", "business agent", "financial inclusion", "correspondent"
         ],
         QueryType.RAG_PMJJBY: [
             "pmjjby", "pradhan mantri jeevan jyoti bima yojana",
-            "life insurance", "term insurance", "jeevan jyoti"
+            "life insurance", "term insurance", "jeevan jyoti", "pmj", "pmjjb", "pmjj"
         ]
     }
     

@@ -2,6 +2,22 @@ from typing import TypedDict, Literal
 from langgraph.graph import StateGraph, END
 
 # State definitions
+# ADD THESE 3 FUNCTIONS AT TOP OF FILE
+
+_authenticated_sessions = set()
+
+def is_user_authenticated(session_id: str) -> bool:
+    """Check if user is authenticated"""
+    return session_id in _authenticated_sessions
+
+def set_user_authenticated(session_id: str, authenticated: bool = True):
+    """Mark user as authenticated"""
+    if authenticated:
+        _authenticated_sessions.add(session_id)
+    else:
+        _authenticated_sessions.discard(session_id)
+
+
 class LoginState(TypedDict):
     user_id: str
     is_authenticated: bool
@@ -28,8 +44,8 @@ def collect_credentials(state: LoginState) -> LoginState:
 
 def authenticate(state: LoginState) -> LoginState:
     """Verify credentials"""
-    # TODO: Implement actual authentication
     state["is_authenticated"] = True
+    set_user_authenticated(state["user_id"], True)  # ← ADD THIS LINE
     return state
 
 def login_router(state: LoginState) -> Literal["collect", "success"]:

@@ -11,7 +11,7 @@ def build_rag_prompt(context: str, query_type: QueryType = None) -> str:
 You are a NodeJS documentation assistant specializing in JavaScript runtime, npm, modules, and async programming.
 """,
         QueryType.RAG_BC: """
-You are a Banking Correspondent (BC) documentation assistant specializing in banking agents, financial inclusion, and BC operations.
+You are a Business Correspondent (BC) documentation assistant specializing in banking agents, financial inclusion, and BC operations.
 """,
         QueryType.RAG_PMJJBY: """
 You are a PMJJBY (Pradhan Mantri Jeevan Jyoti Bima Yojana) documentation assistant specializing in this life insurance scheme.
@@ -47,7 +47,7 @@ You are a query classifier for a specialized documentation system.
 
 Your job is to determine if a user query is about:
 1. NodeJS (JavaScript runtime, npm, modules, async programming)
-2. Banking Correspondent (BC agents, financial inclusion)
+2. Business Correspondent (BC agents, financial inclusion)
 3. PMJJBY (Pradhan Mantri Jeevan Jyoti Bima Yojana)
 
 If the query is NOT clearly about one of these three topics, classify it as REJECTED.
